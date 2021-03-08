@@ -1,35 +1,33 @@
-import { TaskType } from './taskType.enum';
-import { TasksDto } from './tasks.dto';
-import { Task } from './tasks.entity';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Task } from './tasks.entity';
+import { TaskType } from './taskType.enum';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(Task)
-    private tasks: Repository<Task>,
+    private taskRepository: Repository<Task>,
   ) {}
-  async findAll(user: any) {
-    if (user.username === 'admin') {
-      return await this.tasks.find();
-    }
-    return await this.tasks.find({ user: user.userId });
+
+  async findAll(): Promise<any> {
+    return await this.taskRepository.find().then((result) => {
+      return result;
+    });
   }
-  async create(task: TasksDto, date: Date, user: any) {
-    // console.log(;
-    this.tasks.create({
-      name: task.name,
-      dateIssued: date,
-      status: TaskType.DOING,
-      user: user,
-    });
-    return await this.tasks.insert({
-      name: task.name,
-      dateIssued: date,
-      status: TaskType.DOING,
-      user: user,
-    });
+  findOne(): Promise<Task> {
+    return this.taskRepository.findOne();
+  }
+  async editOne(id: number, Task: Task): Promise<any> {
+    await this.taskRepository.update(id, Task);
+  }
+  async createOne(Task: Task): Promise<any> {
+    Task.status = TaskType.DOING;
+    this.taskRepository.create(Task);
+    await this.taskRepository.insert(Task);
+  }
+  async deleteOne(id: number): Promise<any> {
+    await this.taskRepository.delete(id);
   }
 }

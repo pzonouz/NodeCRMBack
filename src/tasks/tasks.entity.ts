@@ -11,6 +11,9 @@ export class Task {
   name: string;
 
   @Column()
+  description: string;
+
+  @Column()
   dateIssued: Date;
 
   @Column()

@@ -9,27 +9,27 @@ import { ContactType } from './contactType.enum';
 export class ContactsService {
   constructor(
     @InjectRepository(Contact)
-    private contacRepository: Repository<Contact>,
+    private contactRepository: Repository<Contact>,
   ) {}
 
   async findAll(): Promise<any> {
-    return await this.contacRepository.find().then((result) => {
+    return await this.contactRepository.find().then((result) => {
       // console.log(result);
       return result;
     });
   }
   findOne(): Promise<Contact> {
-    return this.contacRepository.findOne();
+    return this.contactRepository.findOne();
   }
   async editOne(id: number, contact: Contact): Promise<any> {
-    await this.contacRepository.update(id, contact);
+    await this.contactRepository.update(id, contact);
   }
   async createOne(contact: Contact): Promise<any> {
     contact.contactType = ContactType.CUSTOMER;
-    this.contacRepository.create(contact);
-    await this.contacRepository.insert(contact);
+    this.contactRepository.create(contact);
+    await this.contactRepository.insert(contact);
   }
   async deleteOne(id: number): Promise<any> {
-    await this.contacRepository.delete(id);
+    await this.contactRepository.delete(id);
   }
 }

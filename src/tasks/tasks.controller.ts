@@ -1,32 +1,67 @@
-import { TasksDto } from './tasks.dto';
-import { TasksService } from './tasks.service';
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
+  Put,
+  Req,
   UseGuards,
-  Request,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt.guard';
+import { Task } from './tasks.entity';
+import { TasksService } from './tasks.service';
+import { TaskType } from './taskType.enum';
 
+@UseGuards(JwtGuard)
 @Controller('tasks')
 export class TasksController {
-  constructor(private taskService: TasksService) {}
-
-  @UseGuards(JwtGuard)
+  constructor(private tasksService: TasksService) {}
   @Get('')
-  async findAll(@Request() req: any) {
-    return await this.taskService.findAll(req.user);
+  async findAll(): Promise<any> {
+    return await this.tasksService.findAll();
   }
 
   @UsePipes(ValidationPipe)
-  @UseGuards(JwtGuard)
-  @Post('create')
-  async create(@Body() task: TasksDto, @Request() req: any) {
-    const date = new Date(Date.now());
-    return await this.taskService.create(task, date, req.user);
+  @Put('/edit/:id')
+  async editOne(@Param('id') id: number, @Body() task: Task): Promise<any> {
+    return await this.tasksService
+      .editOne(id, task)
+      .then((result) => {
+        return result;
+      })
+      .catch((err) => {
+        return err.detail;
+      });
+  }
+  @Delete('/delete/:id')
+  async deleteOne(@Param('id') id: number) {
+    return await this.tasksService
+      .deleteOne(id)
+      .then((result) => {
+        return result;
+      })
+      .catch((err) => {
+        return err.detail;
+      });
+  }
+
+  @UsePipes(ValidationPipe)
+  @Post('/create')
+  async createOne(@Body() task: Task, @Req() req: any): Promise<any> {
+    task.dateIssued = new Date();
+    task.status = TaskType.DOING;
+    task.user = req.user;
+    return await this.tasksService
+      .createOne(task)
+      .then((result) => {
+        return result;
+      })
+      .catch((err) => {
+        return err.detail;
+      });
   }
 }
