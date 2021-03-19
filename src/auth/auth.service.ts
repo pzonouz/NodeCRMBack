@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { User } from 'src/users/user.entity';
+import { Role } from 'src/users/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -23,21 +25,25 @@ export class AuthService {
   }
 
   login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { username: user.username, sub: user.id };
     return {
       access_token: this.jwt.sign(payload),
     };
   }
 
-  async registerUser(user: any) {
+  async registerUser(user: User) {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(user.password, salt);
     user.password = hash;
+    user.role = Role.User;
     return await this.userService.create(user);
   }
 
   async listUsers() {
     return await this.userService.findAll();
+  }
+  async editUser(user: User, id: number) {
+    return await this.userService.editUsername(user, id);
   }
 
   async changePasswordByOwn(
@@ -64,7 +70,7 @@ export class AuthService {
     }
     return new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
-  async removeUserByAdmin(username: string) {
-    return await this.userService.removeUserByAdmin(username);
+  async removeUserByAdmin(id: number) {
+    return await this.userService.removeUserByAdmin(id);
   }
 }

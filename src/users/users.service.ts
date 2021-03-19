@@ -19,8 +19,8 @@ export class UsersService {
   async findOne(username: string) {
     return await this.userRepository.findOne({ username });
   }
-  async findOneById(userId: number) {
-    return await this.userRepository.findOne({ userId });
+  async findOneById(id: number) {
+    return await this.userRepository.findOne({ id });
   }
   async create(user: userDto) {
     if (user.username === 'Admin' || user.username === 'admin') {
@@ -41,7 +41,6 @@ export class UsersService {
         role: 'user',
       });
     } catch (error) {
-      console.log(error.detail);
       throw new HttpException(error.detail, HttpStatus.FORBIDDEN);
     }
   }
@@ -67,7 +66,12 @@ export class UsersService {
       });
     }
   }
-  async removeUserByAdmin(username: string) {
-    return await this.userRepository.delete({ username: username });
+  async removeUserByAdmin(id: number) {
+    return await this.userRepository.delete(id);
+  }
+  async editUsername(user: userDto, id: number) {
+    const result = await this.userRepository.findOne(id);
+    result.username = user.username;
+    return await this.userRepository.save(result);
   }
 }

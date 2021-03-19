@@ -21,8 +21,9 @@ import { TaskType } from './taskType.enum';
 export class TasksController {
   constructor(private tasksService: TasksService) {}
   @Get('')
-  async findAll(): Promise<any> {
-    return await this.tasksService.findAll();
+  async findAll(@Req() req: any) {
+    console.log(req.user);
+    return await this.tasksService.findAll(req.user);
   }
 
   @UsePipes(ValidationPipe)

@@ -1,20 +1,21 @@
 import { RolesGuard } from './roles.guard';
-import { userDto } from './../users/user.dto';
 import { JwtGuard } from './jwt.guard';
 import { AuthService } from './auth.service';
 import {
   Body,
   Controller,
+  Delete,
   Get,
-  HttpException,
-  HttpStatus,
+  Param,
   Post,
+  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { LocalGuard } from './local.guard';
 import { Roles } from 'src/users/roles.decorator';
 import { Role } from 'src/users/role.enum';
+import { User } from 'src/users/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -35,8 +36,15 @@ export class AuthController {
   @Roles(Role.Admin)
   @UseGuards(JwtGuard, RolesGuard)
   @Post('register')
-  async register(@Body() newUser: userDto) {
+  async register(@Body() newUser: User) {
     return await this.authService.registerUser(newUser);
+  }
+
+  @Roles(Role.Admin)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Put('edit/:id')
+  async edit(@Body() user: User, @Param() id: number) {
+    return await this.authService.editUser(user, id);
   }
 
   @Roles(Role.Admin)
@@ -62,7 +70,7 @@ export class AuthController {
 
   @Roles(Role.Admin)
   @UseGuards(JwtGuard, RolesGuard)
-  @Post('changePasswordByAdmin')
+  @Put('changePasswordByAdmin')
   async changePasswordByAdmin(
     @Body('username') username: string,
     @Body('newPassword') newPassword: string,
@@ -72,11 +80,18 @@ export class AuthController {
 
   @Roles(Role.Admin)
   @UseGuards(JwtGuard, RolesGuard)
-  @Post('removeUserByAdmin')
-  async removeUserByAdmin(@Body('username') username: string) {
-    if (username === 'admin' || username === 'Admin') {
-      return new HttpException('Can not delete admin.', HttpStatus.FORBIDDEN);
-    }
-    return await this.authService.removeUserByAdmin(username);
+  @Delete('deleteUserByAdmin/:id')
+  async deleteUserByAdmin(@Param() id: number) {
+    return await this.authService.removeUserByAdmin(id);
   }
+
+  // @Roles(Role.Admin)
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Post('removeUserByAdmin')
+  // async removeUserByAdmin(@Body('username') username: string) {
+  //   if (username === 'admin' || username === 'Admin') {
+  //     return new HttpException('Can not delete admin.', HttpStatus.FORBIDDEN);
+  //   }
+  //   return await this.authService.removeUserByAdmin(username);
+  // }
 }

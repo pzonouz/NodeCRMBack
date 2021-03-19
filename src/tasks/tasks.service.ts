@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { Task } from './tasks.entity';
 import { TaskType } from './taskType.enum';
@@ -11,8 +12,8 @@ export class TasksService {
     private taskRepository: Repository<Task>,
   ) {}
 
-  async findAll(): Promise<any> {
-    return await this.taskRepository.find().then((result) => {
+  async findAll(user: User): Promise<any> {
+    return await this.taskRepository.find({ user: user }).then((result) => {
       return result;
     });
   }

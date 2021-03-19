@@ -19,6 +19,6 @@ export class Task {
   @Column()
   status: TaskType;
 
-  @ManyToOne(() => User, (user) => user.userId)
+  @ManyToOne(() => User, (user) => user.id)
   user: User;
 }

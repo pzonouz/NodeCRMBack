@@ -1,4 +1,4 @@
 export enum TaskType {
   DOING = 1,
-  FINNIESHED = 2,
+  FINISHED = 2,
 }

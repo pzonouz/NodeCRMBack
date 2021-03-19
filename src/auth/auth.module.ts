@@ -1,6 +1,5 @@
 import { RolesGuard } from './roles.guard';
-import { Constants } from './../Constantas';
-import { UsersModule } from './../users/users.module';
+import { Constants } from '../Constants';
 import { JwtStrategy } from './jwt.strategy';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,6 +8,7 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
