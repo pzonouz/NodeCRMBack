@@ -31,9 +31,11 @@ export class RemindersController {
     return await this.remindersService
       .createOne(reminder)
       .then((result) => {
+        console.log(result);
         return result;
       })
       .catch((err) => {
+        console.log(err.detail);
         return err.detail;
       });
   }

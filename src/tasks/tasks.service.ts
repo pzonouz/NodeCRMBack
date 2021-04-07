@@ -23,10 +23,10 @@ export class TasksService {
   async editOne(id: number, Task: Task): Promise<any> {
     await this.taskRepository.update(id, Task);
   }
-  async createOne(Task: Task): Promise<any> {
-    Task.status = TaskType.DOING;
-    this.taskRepository.create(Task);
-    await this.taskRepository.insert(Task);
+  async createOne(task: Task): Promise<any> {
+    task.status = TaskType.DOING;
+    this.taskRepository.create(task);
+    await this.taskRepository.insert(task);
   }
   async deleteOne(id: number): Promise<any> {
     await this.taskRepository.delete(id);
